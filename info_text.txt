@@ -1,0 +1,533 @@
+Making brew_crew app using flutter
+
+Very important : Some syntax has changed in new version of dart and flutter. They are here : 
+
+Old                                     updated
+
+FirebaseUser                             User or User?
+_auth.onAuthChanged.map (())                   _auth.authStatehChanges().map(())
+
+Setup To run code in VS code 
+
+1) Install VS code, and in its market place instal Flutter and Dart 
+2) Go to folder icon and click " ctrl+shift+p"
+3) Click on " Flutter: new project", select "application" and name the project " Brew_crew" in folder you want to create project
+4) Click on "create"
+5) Connect the mobile using datacable and turn on us debugging in mobile
+6) Click F5 to run
+
+______________________________________________________________________________________________________________________________
+
+Setting up Firebsae
+
+1) Go to firebase.google.com
+2) Create a free account if u dont have
+3) Create a new project and name your project
+4) Click on android icon after project is created
+5) For android Package name go to VS code and click on "android" folder then go to path "androids>app>src>build.gradle"
+6) Edit the applicationID name (Unique) from there(inside code in line " applicationId "com.example.brew_crew"  
+   and edit the code like "com.vikrant.brew_crew") i.e. repalce example with any unique word.
+7) Copy this "com.vikrant.brew_crew" in android package name in firebase site. and enter any nick name and register
+8) DOwnload json file from there and copy in project folder in android>app
+9) Copy from there the depencies line "
+classpath 'com.google.gms:google-services:4.0.1' 
+"
+and paste it in buil.gradle dependencies
+Note : use(....: 4.0.1 ) not other even if in website is other edit it
+
+10) Copy the apply plugin form site again "
+
+apply plugin: 'com.google.gms.google-services'
+
+"
+and paste it in android>app>src>build.gradle 
+11) Click on next on firebase site and save project
+
+______________________________________________________________________________________________________________________________
+
+Oauth 
+
+1) Goto https://pub.dev/packages/firebase_auth/install
+2) Copy the dependencies " firebase_auth: ^3.3.17 " from there 
+3) Go to " pubspec.yaml" file and paste the above dependencies in dependencies 
+4) Go to " https://pub.dev/packages/cloud_firestore/install "
+5) Copy the dependecies " cloud_firestore: ^3.1.14 "
+6) Paste it in pubspec.yaml dependencies
+
+Now we are ready to interact with backened
+
+______________________________________________________________________________________________________________________________
+
+Creating home page 
+A) when logged in show one page
+B) When not, show another
+
+1) Make "screens" folder inside lib folder
+2) Create 2 folder inside screens folder i.e. "home" and "authenticate"
+3) Create file "authenticate.dart" in authenticate folder
+4) import "package:flutter/material.dart"
+note: by typing "import package" and then press tab to see options and select
+5) add stateful widget by typing "stful" and then tab
+6) Add class name as Authenticate 
+i.e. 
+"
+class Authenticate extends StatefulWidget {
+
+"
+7) Inside container add "
+child: Text('authenticate'),
+"
+8) Inside home folder add "home.dart" file
+9) import 'package:flutter/material.dart';
+10) add stateless widget by typing "stles" and then key tab
+11) Give the class name "Home"
+12) add child:Text('home'), inside container
+13) Create "wrapper.dart" file directly inside screens folder because it is neither home nor authenticate
+14) Imporat material.dart as always and "stles" and tab to add stateless widget
+15) Remove container from it statles widget and return Home()
+typing "Home" after import and selecting what it shows in list as Home()
+
+Note: Automatic import of homr.dart will be done after this
+16) Go to main.dart and remove everything inside material app, also remove all home page or statefu; widget below it 
+17 ) Inside materialapp()
+addd " home: Wrapper(), "
+18 ) Run progran if it says something error with sdk version go to android>app>build.gradle and replace sdkversion code line with 
+"
+minSdkVersion 21
+"
+
+Note: it will automatically import wrapper.dart in main.dart
+______________________________________________________________________________________________________________________________
+
+OAuth
+1) Go t console.firebase.google.com and open the project you created
+2) Click on "Authentication", go to "sign in methods"
+3) Click on "set up Sign in method"
+4) Select "email/password" and click on enable and save
+5) Again, click on " add new provider" and  select "Anonymous" and enable it
+6) Create a folder "services" in Lib folder and create there a file "auth.dart"
+7) import "package:firebase_auth/firebase_auth.dart";
+8) Create class as 
+"
+class AuthService {
+ 
+
+}
+"
+9) Setup sign in anonymously code for signing in without gmail
+______________________________________________________________________________________________________________________________
+
+Creating sign in widget
+
+1) Create a file "sign_in.dart" inside lib>screens>authenticate
+2) Import material.dart and type stful and tab key to create stful widget and name the class as "SignIn"
+3) Return " Scafffold" and set body and appbar design inside it 
+4) Go to wrapper.dart and return "Authenticate()" instead of home 
+5) Go to "authenticate.dart" and change the "child"'s "Text" field to "SignIn()" widget
+6) Run the main.dart to see sign in homepage in mobile
+7) Go to sign_in.dart and add line "
+final AuthService _auth = AuthService(); " inside stateful wodget
+8) Go sign_in.dart and inside body inside "assync" add line "
+dynamic result =  await _auth.signInAnon();
+"
+Note: This will wait when clicked on sign in and wait if there is data in user if not return null
+9) Repalce the code of main.dart with " 
+  void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const MyApp());
+}
+" Note only voide main gunction replacement nothing else to be disturbed. The "async and middle 2 lines are added in updated version of cloud_firestore
+10) Run code to check if all good
+
+______________________________________________________________________________________________________________________________
+
+Creating User Models
+
+1) Go to Lib folder and create a folder "models"
+2) Create a file "users.dart"
+3) Create a class there named as "Users" and define its properties . Final means that wont change in any screens
+4) Go to auth.dart and create user object based on FirebaseUser by creating function " _userFromFirebaseUser " 
+5) Go to try block and  " return _userFromFirebaseUser(user) " instead of "user" only 
+6) Go to sign_in.dart file and in its main body else part edit code from 
+" print(user); "
+to 
+"print(result.uid);" to display user id
+
+______________________________________________________________________________________________________________________________
+
+Streams ( trnasfer from one point A to point B)
+
+The case here is transfering data from firebase to flutter that can be user data or user object when user sign in data
+
+1) Inside services folder go to the file auth.dart and write auth change user stream codes
+________________________________________________________________________________________________________________
+
+Deciding whether to display Authenticate page ( sign in and register ) or home directly ( when already logged in i.e. stream)
+We will use package called provider for that
+
+1) Go to " https://pub.dev/packages/provider/install " 
+2) Copy the dependencies from there and paste in pubspec.yaml i.e. " provider: ^6.0.3 " 
+3) Go to "main.dart" and add widget to material app and replace the word " widget" with "StreamProvider<Users?>.value" and add value there
+4) and " import 'package:provider/provider.dart' " in main.dart
+5) Go to wrapper.dart inside build widget and add line "
+
+final user = Provider.of<Users?>(context);
+print(user)
+"
+6) " import 'package:brew_crew/models/users.dart'; " in wrapper.dart
+7) Run and click on sign in again 
+
+________________________________________________________________________________________________________________
+
+Showing home screen instead of authenticate based on conditions
+1) Go to wrapper.dart
+2) Remove print line and replace "return authenticate();" with
+" and give if check i.e. 
+
+" if(user == null) {
+  return authenticate();
+  } else {
+    return Home();
+  }
+  "
+  3) press F5 and see if mobile screen show Home screen or not. If yes, you are logged in and so showing home screen
+  4) Go to home.dart and remove conatiner with child.Text and design new home page
+  ________________________________________________________________________________________________________________
+Logging out when pressed " logout" from app bar
+
+1) Go to "auth.dart" inside auth services and setup sign out code 
+2) Go to home.dart and insdie class "Home" write "
+final AuthService _auth = AuthService(); 
+"
+3) Inside same home.dart go inside body inside FlatButton.icon, inside onpressed and setup code there "
+onPressed: () async {
+                await _auth.signOut(); //signOut is firebase builtin method
+              },
+              "
+
+4) "import 'package:brew_crew/services/auth.dart';" inside home.dart
+5) Restart program and try sigingout and then siging inanon if everyting works well, congrats
+_____________________________________________________________________________________________________________
+
+Sign in widgets using email and password
+1) Go sign_in.dart and remove "child"'s body totally 
+2)  Create Form widget inside child body for email and password
+3) And refresh code to see home page in mobile screen. 
+4) Set the code for "text field state" in same sign_in.dart
+"
+String email ='';
+String password = '';
+"
+5) set the state in "onChanged" portion of code in both email and password in mai body
+" 
+onChanged: (val) {
+                  setState(() => email = val);
+                },
+" note: use "password" for password 
+6) Also set sign in button in same file and print email and password
+7) Refresh code , enter any email and password in mobile screen, you will see those in console of inside
+8) Create a new file "register.dart" inside authenticate folder.
+9) Inside register.dart import material.dart, make a stateful widget there by typing stful and then tab key, and name the class as "Register"
+10) Now replace the " return conatiner()" of register.dart with 
+body code of  sign_in.dart i.e. copy all of "Scaffold()" code from sign_in.dart to register.dart
+11) In register.dart " import "package:brew_crew/services/auth.dart"; "
+12) Also copy "Final AuthService..." code lin from sign_in.dart to here
+13) Also copy string mail and string pasword i.e. two lines of code from sign_in.dart to register.dart
+and edit the body text that has to be shown in screen from scaffold body
+14) Go to authenticate.dart and instead of returning "SignIn()" , return "Resgister()" and import Register.dart there 
+15) Refresh code and enter email password and click on register, you will see those in console 
+_____________________________________________________________________________________________________________
+Navigation from sign up page and Register page 
+
+1) Go to sign_in.dart file, inside appbar, below title add "actions:  <Widget>[FlatButton.icon()],"
+2) Now go to authenticate.dart  and instead of returning Register " return SignIn()" as child of comtainer.
+3) Copy the "actions: <Widget> [code more]" from sign_in.dart and paste in register.dart inside its app bar but change label to "Sign In" 
+so that we can see sign in button in register page and register button in sign in page
+4) Go to authenticate.dart and change retunr from "SignIn()" to "Register()" 
+5) In authenticate.dart "
+bool showSignIn = true;
+"
+6) from authenticate.dart remove "return ... code" and paste there 
+"
+if (showSignIn) {
+      return SignIn();
+    } else {
+      return Register();
+    }
+"
+7) Add toggleView function in authennticate function " 
+void toggleView() {
+    setState(() => showSignIn = !showSignIn);
+  }
+"
+8) Pass this toggleView function in both SignInand Register function 
+ as " return SignIn(toggleView : ToggleView)"
+9) Go to register.dat inside stateful widget and paste there "
+final Function toggleView;
+Register({required this.toggleView});
+" 
+also do it in sign_in.dart by replacing word Register with "SignIn"
+10 ) Go to register.dart, go to onPressued braces {here} and and inside { } type
+"
+widget.toggleView(); " note: In the body of appbar
+11) Do the same in sign_in.dart
+12) Now click on register or sign on app bar of screen of mobile. You will see pages toggling
+_____________________________________________________________________________________________________________
+
+Making user to enter id and password
+
+1) Go to register.dart and inside state type " 
+final _formkey = GlobalKey<FormState>();
+"
+2) go to body of child:form in same register.dart and type there inside "
+key:_formKey,
+"
+3) Go to Raised button of same file, insie onPressed:() async { here }, type if conditions for validations i.e. 
+
+"
+if(_formKey.currentState!.validate())
+print(email);
+print(password);
+"
+4) now validate the TextFormField inside register.dart
+validator: (val) => val!.isEmpty ? 'Enter an email': null,
+' 
+Note: do for password field and mention length validation condition 
+5) Go to auth.dart, write code for register with email and password
+6) Go to register.dart, go to onPressed remove print code lines and type there "
+ dynamic result = await _auth.registerWithEmailAndPassword(email,password);
+ if(result == null){
+   setState(()=> error = 'Please supply a valid mail');
+
+ } 
+ "
+ 7) Also go to top of this file and add code line "
+ String error = ''; 
+ " 
+ 8) Add an extra sized box outside the Raisedbutton in same file and design it to show error in register screen if any
+ 9) Now Register with any non existing email and password in mobile screen,it will show error, when registered with real email, you will be logged in 
+ 10) Try clicking on logout and you will log out 
+ _____________________________________________________________________________________________________________
+
+ Sign in with exisiting user
+
+1) Copy globay key line from register.dart to signin.dart
+2) Copy string error
+3) copy key from body
+4) Copy the email and password validator
+5) Copy the if check form form validation and replace print with if check in signin.dart
+ Note:remove register line as we need o signup and comment beloow parts
+6) Copy the sized box and text  field after raised button in signin.dart
+  
+  *Creating a method in auth.dart to sign in with email and password*
+
+7) Copy registerWIthEmailAndPassword part on above it
+8) Repalce method name "reigister" with "signIn"
+9) Replace "createUser" with "signIn" in AUthResult line
+10) Go to signin.ddart inside onpressed and write there 
+" dynamic result = await _auth.signInWithEmailAndPassword(email, password);"
+and uncomment below lines which we commented before inside onpressed section
+11) Run and try running with worng gmail that havenot signed up. It will give error
+
+_____________________________________________________________________________________________________________
+
+Making form fields more beautiful
+
+1) Create a folder 'shared' and create a file there " constants.dart"
+2) Add line in textform of signin.dart and regster.dart " decoration: textInputDecoration" where "textInputDecoration" 
+is a lines of codes defined as constant in "constant.dart" so that we can repeat its as single word in other files easily,
+3) Import this constants.dart in files wherever "decoration" is used in text fields
+4) use. ".copywith(hinttext: "")" as hint field cant be constant
+
+_____________________________________________________________________________________________________________
+
+Loading widget to slowdown opening of signin or register pages
+1) Open " https://pub.dev/packages/flutter_spinkit "
+2) Copy the dependency from there to pubspec.yaml
+3) Create "loading.dart" file in "shared" folder.
+4) Setup codes in this file
+5) Go to signin.dart and create a stete in _signinstate as "
+bool loading = false;'
+6) Go to onPressed section AND INSIDE THAT 
+" setState(() => loading = true); " 
+and if result is null set l"oading = fals;"e again there
+7) edit 1st line of build widget to return either loading or scafffold 
+8) Do same in register.dart
+9) Register and signup to see effects
+
+_____________________________________________________________________________________________________________
+
+Database and showing data on profiel ( Furestore)
+
+1) Go to your project in console.firebase.google.com and open Firestore Database from left corner
+2) Click on " Create database" and select "start in test mode" 
+3) Select "asia-south1" for location
+4) Let us code in vs code rather than creating a collection
+
+Collection consists of documents and each documents have key values pars of man data 
+
+1) Install cloud_firestore in pubspec.yaml if it is not already
+2) Create a file database.dart inside services folder
+3) Create 'DatabaseService' class in there and refrence a collection in that class
+
+_____________________________________________________________________________________________________________
+Adding records for user in database
+what to do in Firestore
+ - create documents
+ - with new registration ( accounts) create new record in 'brews' collection for that user
+  i.e. each new user wil have their own new documents in this collection and each document will
+  have 3 properties : name, sugat, strenth that will be updated later
+  - Linking each user with their particular document only for that they have unique ID 
+  - after user sign ups we gonna take that id from user generated randomly 
+  and creates a new document with that ID inside brews collection for that user and add some dummy data 
+
+
+1) Use final string uid to create documents
+2) create updateUserData method to create document and update it later
+3) Go to auth.dart, in the method "registerwithemailandpassword", 
+and create new document for each user with uid ( i.e. call DatabaseService method)
+
+4)Register with new account and you will see new document in firestore website.
+
+_____________________________________________________________________________________________________________
+
+Getting data from firestore on our app
+- For which we will setup another stream which will inform us of any changes in document
+- or any changes in database. so then we can extract the data at that moment and do something with it.
+
+- when user register , a collection is created for that user, we wil get snap shot of that moment and 
+it will contain the documents in it including the one that just been added
+- when we change docuemnt , we wll get fresh snapshot of current state of collection
+including the fress change so we will get updated data and updated collection.
+
+Step 1: setting up this stream to listen up to database inside database service class in database.dart
+
+1) delete all users from authentication in firebase website of which document was not created.
+2) Create stream with return type "QuerySnapshot" and this will be query snapsht or snapshot of firebase collection
+3) Go to home.dart, import database.dart file, cloud_firestore.dart and and provider.dart 
+4) Wrap "scaffod" with widget and name this widget "StreamProvider<QuerySnapshot>.value'
+5) add line inside it " value: DatabaseService().brews, "
+6) Specify a body property below the appbar
+7) Inside it create a new widget " BrewList"
+8) Go below the app bar and create " body: BrewList()" where body is property that dispaly snapshot along with the body made befire
+9) Create a file brew_kist inside folder home. This will be responsible for outputing different brews on page 
+10 ) Import necessary files 
+11) Make stateful widget "stful + tab key" and name it as BrewList which we mentioned above in home.dart body
+12 ) add necessary lines of codes
+13) Import brew_list.dart in home.dart
+
+-----------------------------------------------------------
+Instead of receiving snapshots of colection, we can receive brew objects so we dont have to save documents and cycle throgh documents
+- we will just have single list of brew objects 
+- create brew model just lik user model 
+- when we receive query snapshot down the stream we can convert that in to brew object 
+- when we listen to this stream in ui widgets then we just receive list of objects rather than a query snapshot
+
+
+1) inside model folder create a file "brew.dart"
+2) Create a class Brew and define the fields inside it
+3) crete constructors
+4) Go to database.dart and create a function with return type list and type of data in it "brew" and define code there
+5) Import brew model in database.dart
+6) Map the stream to _brewListFromSNapshot, convert return type frm  snapshot query to list of Brew 
+7) gO TO home.dart, change return type of streamprovider from QuerySnapshot to <List<Brew>>.value
+8) import brew.dart model folder in home.dart 
+9) Go ot brew_list.dart, replacefinal brews from Query snapshot to >List<Brew>>
+10) Import brew.dart here 
+11) Remove brew.docs and for loop and use 'For Each' method to go through these and print object properties  
+
+-------------------------------------------------------------
+
+SHowing collection record on screen ( outputting data to screen ) 
+- we will use list builder widget that allows to cycle through list and output template for each item in that list
+- we will create listview builder 
+
+1) INstead of returnin container in brew_list.dart
+" return ListView.builder();"
+2) Define define the code there
+3) Go to home folder make a new file 'brew_tile.dart' to insert code of brewTile widget of uper codes
+4) Import material.dart and brew.dart here in brew_tile.dart
+5)  create a statelesss widget named as BrewTile
+6) DEfine codes there to display lists on screen 
+7) Import brew_tile.dart in brew_list.dart8)
+
+--------------------------------------------------------------------------
+
+Letting user update their data in brew list that can appear on screen
+- We will build a pop up butto which will open form where user can edit data
+- In flutter this button is call button sheet and there is function built in flutter
+to show one of these pretty easily
+
+Creating icon on right side
+1) Go to home.dart in action widget and create another flatbutton.icon after signout button
+2) Assign a function named _showSettings{Panel() to "onPressed" and define this function in same file in build method
+3) After adding code to _showsettingpane function refresh code
+4) You will se setting icon on right side and when cicked will show bottom sheet 
+
+----------------------------------------------------------------------------
+
+Creating form to open in settings icon when clicked that will be used to update data by user
+
+1) Create a new file in the folder home named settings_form.dart
+2) import things
+3) import constants.dart for text decoration
+4) Create stateful widget named SettingsFrom to keep track of what user types
+5) Write code there
+6) Create form inside the build function of same file 
+7) Go to home.dart and replace Text('bottom sheet') widget in build function with SettingsForm() widget by pressing tab to import this as well 
+8) Go back to settins_form.dart and add SizedBox() and text form field for name 
+9) Give one more sized box and then dropdown i.e. slider code using Raised button
+10 ) write code for dropdown for sugars in same file 
+11)  run to see if settings show form or not and select vlaues in fomr to see output on console
+
+-------------------------------------------------
+
+Field for strength of coffee: wheat coffee or strng coffe
+- we will use slider widget: sliding control from left to right i.e. weak to strong 
+- we will also play with colors
+1) Open settings_form.dart and create Slider() widget and define properties inside it
+
+_____________________________________________________________________________________________________________
+
+We will prepopulate form with value the user have saved. It mean once user has saved some values it will be shown when the open form again ( not 0 or 100 as default value)
+- we will create newstream
+- we will create user dtaa model
+
+1) Go to database.dart and setup stream to get user doc
+2) create stream DocumentSnapshot get updateUserData
+3) write code there to return brewCollection.document i.e. updateUserData
+4) Go to user.dart and create a class UserData and define properties again in this class that will represent user data
+5) Go to database.dart 
+
+We need a method to take a document snapshot and turn it into a user data object based on that user data model 
+ 6) write code for comment ' userData from snapshot' i.e. create function "_userDataFromSnapshot"
+ 
+Now we will use this function in stream in database.dart
+7) Replace Stream<DocumentSnapshot> with Stream<UserData> 
+8) Map this to different stream i.e. .map(_userDataFromSnapshot)
+
+----------------------------------------------------------------------
+
+Now we wil work with data that we get from that upper stream inside setting widget
+- when we need to use stream in one single widget we can easily use builtin stream biilder
+
+1) Go to settings_form.dart and wrap form widget with "streambuilder" and pass UserData as object
+2) and replace stream from null to DatabaseService(uid:user?.uid).userData by passing uid
+3) ALso " final user = Provider.of<User>(context);" inside build widget
+4) Write if check for snapshot so thta form will be returned only if snapshot has data
+5) Go to dropdownbottomfield and change defualt value of Value from 0 to userData.sugars
+6) Go to SLider and change default value form 100 to userData.strength ( also for active and inactive color)
+7) Go to text field and add initial valeu as userData.name
+9) Go to else part and return Loading();
+
+--------------------------------------------------------------------
+
+Updating data when "update" is clicked in firestore
+
+1) Go to settings_form.dart and remoe print statements from onPressed()
+2)  Instead, check for validation using validate function and form key in current state
+3) Create instance of database and use updateData() function and pass all properties
+4) You will be now able to update data throgh app directly and when u log out and sign in again u will see those as default values
+
+
