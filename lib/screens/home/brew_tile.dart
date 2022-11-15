@@ -19,6 +19,8 @@ class BrewTile extends StatelessWidget {
             radius: 25.0,
             backgroundColor: Colors.brown[brew
                 .strength], // as brew strength is 10 by default and can be variable as customer require
+            //adding background image to circle avatar
+            backgroundImage: AssetImage('assets/coffee_icon.png'),
           ),
           title: Text(brew.name),
           subtitle: Text('Takes ${brew.sugars} sugar(s)'),

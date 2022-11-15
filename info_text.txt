@@ -1,4 +1,8 @@
 Making brew_crew app using flutter
+--------------------------------------------------------------------------------------------------------------------------------------
+Firebase website https://console.firebase.google.com
+
+--------------------------------------------------------------------------------------------------------------------------------------
 
 Very important : Some syntax has changed in new version of dart and flutter. They are here : 
 
@@ -7,6 +11,7 @@ Old                                     updated
 FirebaseUser                             User or User?
 _auth.onAuthChanged.map (())                   _auth.authStatehChanges().map(())
 
+---------------------------------------------------------------------------------------------------------------------------------------
 Setup To run code in VS code 
 
 1) Install VS code, and in its market place instal Flutter and Dart 
@@ -529,5 +534,34 @@ Updating data when "update" is clicked in firestore
 2)  Instead, check for validation using validate function and form key in current state
 3) Create instance of database and use updateData() function and pass all properties
 4) You will be now able to update data throgh app directly and when u log out and sign in again u will see those as default values
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Adding images in place of icon and wallpaper
+
+1) Create a new folder named "assets"
+2) Download images in this folder "coffee_icon.png" and "coffee_bg.png"
+3) Go to pubspec.yaml and add line " -assets/ " inside assets:
+4) Go to home.dart ad wrap 'body:BrewList" with container
+5) add decoration inside container now and add codes for decoration
+6) Go to brew_tile.dart inside build function
+7) add background image to circleAvatar
+8) Refresh app to see all changes
+
+---------------------------------------------------------
+
+App finished and let us check if all things wrking
+
+1) Delete all users and documents from authentication and database from firestore
+2) Register again from different ids and add new data and see all works and data are changed accordinly in firestore website as well
+
+_____________________________________________________________________________________________________________
+
+See you in Future
+
+Thanks to courses from where I made this
+
+Youtube: https://youtube.com/playlist?list=PL4cUxeGkcC9j--TKIdkb3ISfRbJeJYQwC
+Github: https://github.com/iamshaunjp/flutter-firebase.git
 
 
