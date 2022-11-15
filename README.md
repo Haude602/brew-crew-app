@@ -1,16 +1,26 @@
 # brew_crew
 
-A new Flutter project.
+A Flutter Project that uses flutter, firebase and firestore. It consists of simple UI and ineractive home screen to login or register. After login it will show he list of orders from customers. The orders are coffee with their sugar level, stregth of coffee and and their name. The user can update their order info from settings button or log out.
 
-## Getting Started
+# to run project
 
-This project is a starting point for a Flutter application.
+1) Clone the repo on your system
+2) Open this folder in VS Code
+3) Press f5 key in main.dart file to build and run the prject
+4) Please connect your mobile using datacable in debug mode or you can use emulatar from emulator before running this project.
 
-A few resources to get you started if this is your first Flutter project:
+# to build apk
+ 1) Open new terminal 
+ 2) press " flutter build apk " and enter
+ 3) Copy the flutter-release.apk from build>outputs
+ 4) Send this apk in mobile in which you want to install app
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+# Note: Turn on the "developer option" from setting in mobile, turn on debug mode, and allow installation from unknown resources.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+You can find step wise process in info_text.txt but that might not be so clear to you. 
+
+
+# Thanks to courses from where I made this
+
+Youtube: https://youtube.com/playlist?list=PL4cUxeGkcC9j--TKIdkb3ISfRbJeJYQwC
+Github: https://github.com/iamshaunjp/flutter-firebase.git
